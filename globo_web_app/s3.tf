@@ -1,21 +1,21 @@
 
 resource "aws_s3_bucket" "s3bucket" {
 
-    bucket = local.s3_bucket_name
-    force_destroy = true
+  bucket        = local.s3_bucket_name
+  force_destroy = true
 
-    tags = local.common_tags
+  tags = local.common_tags
 
 }
 
 #COPY objects required by the website
 resource "aws_s3_object" "website" {
-  for_each = fileset("../website/","*")
-  bucket = aws_s3_bucket.s3bucket.bucket
-  key    = "website/${each.value}"
-  source = "../website/${each.value}"
+  for_each = fileset("../website/", "*")
+  bucket   = aws_s3_bucket.s3bucket.bucket
+  key      = "website/${each.value}"
+  source   = "../website/${each.value}"
   etag     = filemd5("../website/${each.value}")
-  tags = local.common_tags
+  tags     = local.common_tags
 
 }
 

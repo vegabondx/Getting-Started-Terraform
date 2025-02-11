@@ -3,7 +3,7 @@
 resource "aws_iam_role" "s3accessrole" {
   name = "s3accessrole"
 
-    assume_role_policy = jsonencode({
+  assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {

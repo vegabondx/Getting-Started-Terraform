@@ -22,5 +22,5 @@ locals {
 resource "random_integer" "s3suffix" {
   min = 10000
   max = 99999
-  
+
 }

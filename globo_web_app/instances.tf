@@ -6,7 +6,7 @@ data "aws_ssm_parameter" "amzn2_linux" {
 
 # Saving the user data script for reuse
 locals {
-    user_data_script = <<EOF
+  user_data_script = <<EOF
     #! /bin/bash
     sudo amazon-linux-extras install -y nginx1
     sudo service nginx start
@@ -25,18 +25,19 @@ resource "aws_instance" "nginx1" {
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public_subnet1.id
-  iam_instance_profile = aws_iam_instance_profile.s3access.name
+  iam_instance_profile   = aws_iam_instance_profile.s3access.name
+  depends_on             = [aws_iam_role_policy_attachment.s3attachment]
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
-
-  user_data = local.user_data_script 
+  user_data              = local.user_data_script
 }
 
 resource "aws_instance" "nginx2" {
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public_subnet1.id
+  depends_on             = [aws_iam_policy.s3bucketpolicy]
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
-  iam_instance_profile = aws_iam_instance_profile.s3access.name
-  user_data = local.user_data_script
+  iam_instance_profile   = aws_iam_instance_profile.s3access.name
+  user_data              = local.user_data_script
 }
 
