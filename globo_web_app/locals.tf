@@ -1,6 +1,7 @@
 # Get the account id as prefix
 data "aws_caller_identity" "current" {}
 
+# Local variables and constants
 locals {
   common_tags = {
     company      = var.company
@@ -8,11 +9,9 @@ locals {
     billing_code = var.billing_code
   }
 
-  aws_cidr_blocks = ["10.0.0.0/24","10.0.1.0/24","10.0.2.0/24","10.0.3.0/24","10.0.4.0/24"]
+  vpc_cidr_block = "10.0.0.0/16"
 
-  s3_bucket_name = "${data.aws_caller_identity.current.account_id}-globo-web-app-${random_integer.s3suffix.result}"
-
-
+  s3_bucket_name = "${data.aws_caller_identity.current.account_id}-${var.prefix}-${random_integer.s3suffix.result}"
 
 }
 

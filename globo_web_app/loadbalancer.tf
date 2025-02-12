@@ -3,12 +3,12 @@ resource "aws_lb" "nginx" {
   internal                   = false
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.nginx_sg.id]
-  subnets                    = [for x in aws_subnet.public_subnets: x.id]
+  subnets                    = [for x in aws_subnet.public_subnets : x.id]
   depends_on                 = [aws_s3_bucket_policy.web_bucket]
   enable_deletion_protection = false
 
   access_logs {
-    bucket  = aws_s3_bucket.s3bucket
+    bucket  = aws_s3_bucket.s3bucket.bucket
     prefix  = "alb-logs"
     enabled = true
 
@@ -40,7 +40,7 @@ resource "aws_lb_listener" "nginx" {
 
 
 resource "aws_lb_target_group_attachment" "aws-tg-attach" {
-  count = var.instance_count
+  count            = var.instance_count
   target_group_arn = aws_lb_target_group.nginx.arn
   target_id        = aws_instance.nginx[count.index].id
   port             = 80

@@ -1,8 +1,7 @@
 
 #create role which can be assumed
 resource "aws_iam_role" "s3accessrole" {
-  name = "s3accessrole"
-
+  name = "${var.prefix}-s3accessrole"
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -20,7 +19,7 @@ resource "aws_iam_role" "s3accessrole" {
 
 # Create policy that grants access
 resource "aws_iam_policy" "s3bucketpolicy" {
-  name        = "s3bucketpolicy"
+  name        = "${var.prefix}-s3bucketpolicy"
   description = "A policy to allow access to an S3 bucket"
 
   policy = jsonencode({
@@ -50,6 +49,6 @@ resource "aws_iam_role_policy_attachment" "s3attachment" {
 
 # Associate instance profile with s3access
 resource "aws_iam_instance_profile" "s3access" {
-  name = "s3access"
+  name = "${var.prefix}-s3access"
   role = aws_iam_role.s3accessrole.name
 }

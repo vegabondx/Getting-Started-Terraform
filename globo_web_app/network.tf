@@ -12,9 +12,9 @@ data "aws_availability_zones" "available" {
 
 # NETWORKING #
 resource "aws_vpc" "app" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
-  tags                 = local.common_tags
+  tags                 = merge(local.common_tags,{Name="${var.prefix}-vpc"})
 
 }
 
@@ -25,12 +25,12 @@ resource "aws_internet_gateway" "app" {
 }
 
 resource "aws_subnet" "public_subnets" {
-  count = var.vpc_public_subnet_count
-  cidr_block              = local.aws_cidr_blocks[count.index]
+  count                   = var.vpc_public_subnet_count
+  cidr_block              = cidrsubnet(local.vpc_cidr_block, 8, count.index)
   vpc_id                  = aws_vpc.app.id
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  tags                    = local.common_tags
+  tags                    = merge(local.common_tags,{Name="${var.prefix}-subnet-${count.index}"})
 }
 
 # ROUTING #
@@ -45,14 +45,14 @@ resource "aws_route_table" "app" {
 }
 
 resource "aws_route_table_association" "app_subnets" {
-  count= var.vpc_public_subnet_count
-  subnet_id      = aws_subnet.public_subnets[count.index]
+  count          = var.vpc_public_subnet_count
+  subnet_id      = aws_subnet.public_subnets[count.index].id
   route_table_id = aws_route_table.app.id
 }
 # SECURITY GROUPS #
 # Nginx security group 
 resource "aws_security_group" "nginx_sg" {
-  name   = "nginx_sg"
+  name   = "${var.prefix}-nginx_sg"
   vpc_id = aws_vpc.app.id
 
   # HTTP access from anywhere
@@ -74,7 +74,7 @@ resource "aws_security_group" "nginx_sg" {
 }
 
 resource "aws_security_group" "alb_sg" {
-  name   = "alb_sg"
+  name   = "${var.prefix}-alb_sg"
   vpc_id = aws_vpc.app.id
 
   # HTTP access from anywhere

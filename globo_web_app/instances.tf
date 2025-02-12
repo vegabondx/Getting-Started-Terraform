@@ -6,28 +6,19 @@ data "aws_ssm_parameter" "amzn2_linux" {
 
 # Saving the user data script for reuse
 locals {
-  user_data_script = <<EOF
-    #! /bin/bash
-    sudo amazon-linux-extras install -y nginx1
-    sudo service nginx start
-    aws s3 cp s3://${aws_s3_bucket.s3bucket.id}/website/index.html /home/ec2-user/index.html
-    aws s3 cp s3://${aws_s3_bucket.s3bucket.id}/website/Globo_logo_Vert.png /home/ec2-user/Globo_logo_Vert.png
-    sudo rm /usr/share/nginx/html/index.html
-    sudo cp /home/ec2-user/index.html /usr/share/nginx/html/index.html
-    sudo cp /home/ec2-user/Globo_logo_Vert.png /usr/share/nginx/html/Globo_logo_Vert.png
-    EC2_DNS=`curl http://169.254.169.254/latest/meta-data/public-hostname`
-    sed -i "s/DNS_ADDRESS/$EC2_DNS/g" /usr/share/nginx/html/index.html
-EOF
+  user_data_script = templatefile("${path.module}/scripts/startup_script.tpl",
+  { s3_bucket_name = aws_s3_bucket.s3bucket.id })
 }
 
 # INSTANCES #
 resource "aws_instance" "nginx" {
-  count = var.instance_count
+  count                  = var.instance_count
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = var.instance_type
-  subnet_id              = aws_subnet.public_subnets[count.index % var.vpc_public_subnet_count]
+  subnet_id              = aws_subnet.public_subnets[count.index % var.vpc_public_subnet_count].id
   iam_instance_profile   = aws_iam_instance_profile.s3access.name
   depends_on             = [aws_iam_role_policy_attachment.s3attachment]
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
   user_data              = local.user_data_script
+  tags = merge(local.common_tags,{Name="${var.prefix}-nginx-${count.index}"})
 }
