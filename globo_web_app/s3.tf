@@ -10,11 +10,11 @@ resource "aws_s3_bucket" "s3bucket" {
 
 #COPY objects required by the website
 resource "aws_s3_object" "website" {
-  for_each = fileset("../website/", "*")
+  for_each = fileset("${path.root}/../website/", "*")
   bucket   = aws_s3_bucket.s3bucket.bucket
   key      = "website/${each.value}"
-  source   = "../website/${each.value}"
-  etag     = filemd5("../website/${each.value}")
+  source   = "${path.root}/../website/${each.value}"
+  etag     = filemd5("${path.root}/../website/${each.value}")
   tags     = local.common_tags
 
 }
