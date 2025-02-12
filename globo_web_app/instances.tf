@@ -20,5 +20,5 @@ resource "aws_instance" "nginx" {
   depends_on             = [aws_iam_role_policy_attachment.s3attachment]
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
   user_data              = local.user_data_script
-  tags = merge(local.common_tags,{Name="${var.prefix}-nginx-${count.index}"})
+  tags                   = merge(local.common_tags, { Name = "${var.prefix}-nginx-${count.index}" })
 }

@@ -14,7 +14,7 @@ data "aws_availability_zones" "available" {
 resource "aws_vpc" "app" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
-  tags                 = merge(local.common_tags,{Name="${var.prefix}-vpc"})
+  tags                 = merge(local.common_tags, { Name = "${var.prefix}-vpc" })
 
 }
 
@@ -30,7 +30,7 @@ resource "aws_subnet" "public_subnets" {
   vpc_id                  = aws_vpc.app.id
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[count.index]
-  tags                    = merge(local.common_tags,{Name="${var.prefix}-subnet-${count.index}"})
+  tags                    = merge(local.common_tags, { Name = "${var.prefix}-subnet-${count.index}" })
 }
 
 # ROUTING #
