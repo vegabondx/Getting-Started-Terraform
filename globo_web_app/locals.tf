@@ -8,10 +8,7 @@ locals {
     billing_code = var.billing_code
   }
 
-  aws_cidr_blocks = {
-    one = "10.0.0.0/24"
-    two = "10.0.1.0/24"
-  }
+  aws_cidr_blocks = ["10.0.0.0/24","10.0.1.0/24","10.0.2.0/24","10.0.3.0/24","10.0.4.0/24"]
 
   s3_bucket_name = "${data.aws_caller_identity.current.account_id}-globo-web-app-${random_integer.s3suffix.result}"
 

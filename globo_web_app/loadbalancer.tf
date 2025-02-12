@@ -3,7 +3,7 @@ resource "aws_lb" "nginx" {
   internal                   = false
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.nginx_sg.id]
-  subnets                    = [aws_subnet.public_subnet1.id, aws_subnet.public_subnet2.id]
+  subnets                    = [for x in aws_subnet.public_subnets: x.id]
   depends_on                 = [aws_s3_bucket_policy.web_bucket]
   enable_deletion_protection = false
 

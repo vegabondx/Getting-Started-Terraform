@@ -24,7 +24,7 @@ EOF
 resource "aws_instance" "nginx1" {
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = "t3.micro"
-  subnet_id              = aws_subnet.public_subnet1.id
+  subnet_id              = aws_subnet.public_subnets[0]
   iam_instance_profile   = aws_iam_instance_profile.s3access.name
   depends_on             = [aws_iam_role_policy_attachment.s3attachment]
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
@@ -34,7 +34,7 @@ resource "aws_instance" "nginx1" {
 resource "aws_instance" "nginx2" {
   ami                    = nonsensitive(data.aws_ssm_parameter.amzn2_linux.value)
   instance_type          = "t3.micro"
-  subnet_id              = aws_subnet.public_subnet1.id
+  subnet_id              = aws_subnet.public_subnets[1]
   depends_on             = [aws_iam_policy.s3bucketpolicy]
   vpc_security_group_ids = [aws_security_group.nginx_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.s3access.name

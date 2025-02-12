@@ -20,3 +20,12 @@ variable "billing_code" {
   description = "billings code"
 }
 
+variable "vpc_public_subnet_count" {
+  type = number
+  description = "subnets"
+  default = 2
+  validation {
+    condition = var.vpc_public_subnet_count>5 && var.vpc_public_subnet_count > 1
+    error_message = "min value is 2 and max value is 5"
+  }
+}
