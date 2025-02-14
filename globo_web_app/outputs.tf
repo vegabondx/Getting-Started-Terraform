@@ -9,6 +9,6 @@ output "availability_zones_utilized" {
 }
 
 output "s3_bucket_name" {
-  value       = local.s3_bucket_name
+  value       = module.web_bucket.bucket_obj.bucket
   description = "s3 bucket name"
 }

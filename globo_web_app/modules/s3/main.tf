@@ -1,25 +1,25 @@
-variable "s3_bucket_name" {
-    type = string
-    description = "Name of bucket"
+variable "s3_bucket_prefix" {
+  type        = string
+  description = "Prefix of bucket"
 }
 
-variable "common_tags"{
-    type = map(string)
-    description = "common tags"
-    default = {}
+variable "common_tags" {
+  type        = map(string)
+  description = "common tags"
+  default     = {}
 }
 
 variable "resource_policy_account_arn" {
-    type = string
-    description = "resource access policy arns"
+  type        = string
+  description = "resource access policy arns"
 }
 
 
 resource "aws_s3_bucket" "bucket_obj" {
 
-  bucket        = var.s3_bucket_name
+  bucket_prefix = var.s3_bucket_prefix
   force_destroy = true
-  tags = var.common_tags
+  tags          = var.common_tags
 
 }
 
@@ -35,7 +35,7 @@ resource "aws_s3_bucket_policy" "web_bucket" {
         "AWS": "${var.resource_policy_account_arn}"
       },
       "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::${var.s3_bucket_name}/alb-logs/*"
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.bucket_obj.bucket}/alb-logs/*"
     },
     {
       "Effect": "Allow",
@@ -43,7 +43,7 @@ resource "aws_s3_bucket_policy" "web_bucket" {
         "Service": "delivery.logs.amazonaws.com"
       },
       "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::${var.s3_bucket_name}/alb-logs/*",
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.bucket_obj.bucket}/alb-logs/*",
       "Condition": {
         "StringEquals": {
           "s3:x-amz-acl": "bucket-owner-full-control"
@@ -56,7 +56,7 @@ resource "aws_s3_bucket_policy" "web_bucket" {
         "Service": "delivery.logs.amazonaws.com"
       },
       "Action": "s3:GetBucketAcl",
-      "Resource": "arn:aws:s3:::${var.s3_bucket_name}"
+      "Resource": "arn:aws:s3:::${aws_s3_bucket.bucket_obj.bucket}"
     }
   ]
 }
@@ -65,5 +65,5 @@ POLICY
 
 // Redundant output but yielding the entire bucket object
 output "bucket_obj" {
-    value = aws_s3_bucket.bucket_obj
+  value = aws_s3_bucket.bucket_obj
 }

@@ -5,7 +5,7 @@ data "aws_elb_service_account" "root" {}
 # Instance of Module Web bucket
 module "web_bucket" {
   source                      = "./modules/s3"
-  s3_bucket_name              = local.s3_bucket_name
+  s3_bucket_prefix            = local.s3_bucket_prefix
   resource_policy_account_arn = data.aws_elb_service_account.root.arn
   common_tags                 = local.common_tags
 

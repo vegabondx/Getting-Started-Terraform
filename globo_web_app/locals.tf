@@ -11,7 +11,7 @@ locals {
 
   vpc_cidr_block = "10.0.0.0/16"
 
-  s3_bucket_name = "${data.aws_caller_identity.current.account_id}-${var.prefix}-${random_integer.s3suffix.result}"
+  s3_bucket_prefix = "${data.aws_caller_identity.current.account_id}-${var.prefix}-"
 
 }
 
