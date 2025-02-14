@@ -4,11 +4,11 @@ resource "aws_lb" "nginx" {
   load_balancer_type         = "application"
   security_groups            = [aws_security_group.nginx_sg.id]
   subnets                    = module.vpc.public_subnets
-  depends_on                 = [aws_s3_bucket_policy.web_bucket]
+  depends_on                 = [module.web_bucket]
   enable_deletion_protection = false
 
   access_logs {
-    bucket  = aws_s3_bucket.s3bucket.bucket
+    bucket  = module.web_bucket.bucket
     prefix  = "alb-logs"
     enabled = true
 
