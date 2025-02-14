@@ -15,7 +15,7 @@ variable "resource_policy_account_arn" {
 }
 
 
-resource "aws_s3_bucket" "s3bucket" {
+resource "aws_s3_bucket" "bucket_obj" {
 
   bucket        = var.s3_bucket_name
   force_destroy = true
@@ -24,7 +24,7 @@ resource "aws_s3_bucket" "s3bucket" {
 }
 
 resource "aws_s3_bucket_policy" "web_bucket" {
-  bucket = aws_s3_bucket.s3bucket.id
+  bucket = aws_s3_bucket.bucket_obj.bucket
   policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -63,7 +63,7 @@ resource "aws_s3_bucket_policy" "web_bucket" {
 POLICY
 }
 
-// Redundant output but for clarity
-output "bucket" {
-    value = aws_s3_bucket.s3bucket.bucket
+// Redundant output but yielding the entire bucket object
+output "bucket_obj" {
+    value = aws_s3_bucket.bucket_obj
 }

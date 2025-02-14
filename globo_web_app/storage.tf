@@ -15,7 +15,7 @@ module "web_bucket" {
 #COPY objects required by the website
 resource "aws_s3_object" "website" {
   for_each = fileset("${path.root}/../website/", "*")
-  bucket   = module.web_bucket.bucket
+  bucket   = module.web_bucket.bucket_obj.bucket
   key      = "website/${each.value}"
   source   = "${path.root}/../website/${each.value}"
   etag     = filemd5("${path.root}/../website/${each.value}")

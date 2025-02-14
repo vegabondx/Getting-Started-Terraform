@@ -7,7 +7,7 @@ data "aws_ssm_parameter" "amzn2_linux" {
 # Saving the user data script for reuse
 locals {
   user_data_script = templatefile("${path.module}/scripts/startup_script.tpl",
-  { s3_bucket_name = module.web_bucket.bucket })
+  { s3_bucket_name = module.web_bucket.bucket_obj.bucket })
 }
 
 # INSTANCES #

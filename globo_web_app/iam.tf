@@ -33,8 +33,8 @@ resource "aws_iam_policy" "s3bucketpolicy" {
           "s3:ListBucket"
         ],
         Resource = [
-          "arn:aws:s3:::${module.web_bucket.bucket}",
-          "arn:aws:s3:::${module.web_bucket.bucket}/*"
+          "arn:aws:s3:::${module.web_bucket.bucket_obj.bucket}",
+          "arn:aws:s3:::${module.web_bucket.bucket_obj.bucket}/*"
         ]
       }
     ]
